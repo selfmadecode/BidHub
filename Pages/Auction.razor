@@ -1,0 +1,69 @@
+﻿@page "/auction"
+
+<h1>Welcome to the Auction Site</h1>
+
+@if (auctionItems != null && auctionItems.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Current Price</th>
+                <th>Join Auction</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in auctionItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.CurrentPrice</td>
+                    @* <td><button @onclick="() => JoinAuction(item.Id)">Join</button></td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No items are currently being auctioned.</p>
+}
+@code{
+    List<AuctionItem> auctionItems = new List<AuctionItem>
+    {
+        new AuctionItem { Id = 1, Name = "Artwork", CurrentPrice = "$100" },
+        new AuctionItem { Id = 2, Name = "Antique Watch", CurrentPrice = "$250" },
+        new AuctionItem { Id = 3, Name = "Vintage Car", CurrentPrice = "$5000" }
+    };
+
+    public class AuctionItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string CurrentPrice { get; set; }
+    }
+}
+@* @code {
+    // Sample data for demonstration
+    List<AuctionItem> auctionItems = new List<AuctionItem>
+    {
+        new AuctionItem { Id = 1, Name = "Artwork", CurrentPrice = "$100" },
+        new AuctionItem { Id = 2, Name = "Antique Watch", CurrentPrice = "$250" },
+        new AuctionItem { Id = 3, Name = "Vintage Car", CurrentPrice = "$5000" }
+    };
+
+    // Method to join the auction
+    void JoinAuction(int itemId)
+    {
+        // Redirect to the auction details page with the selected item ID
+        NavigationManager.NavigateTo($"/auction/{itemId}");
+    }
+
+    // Sample class for AuctionItem
+    public class AuctionItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string CurrentPrice { get; set; }
+    }
+} *@
