@@ -1,4 +1,5 @@
 ﻿@page "/auction"
+@using Microsoft.AspNetCore.SignalR.Client
 
 <h1>Welcome to the Auction Site</h1>
 
@@ -28,23 +29,25 @@ else
 {
     <p>No items are currently being auctioned.</p>
 }
-@code{
-    List<AuctionItem> auctionItems = new List<AuctionItem>
-    {
-        new AuctionItem { Id = 1, Name = "Artwork", CurrentPrice = "$100" },
-        new AuctionItem { Id = 2, Name = "Antique Watch", CurrentPrice = "$250" },
-        new AuctionItem { Id = 3, Name = "Vintage Car", CurrentPrice = "$5000" }
-    };
 
-    public class AuctionItem
+
+@code{
+    private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string CurrentPrice { get; set; }
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/auctionHub"))
+            .Build();
+
+        hubConnection.On<int, string>("ReceiveAuctionUpdate", (itemId, message) =>
+        {
+            // Handle auction updates received from the server
+            // For example, update the UI to display the message
+        });
+
+        await hubConnection.StartAsync();
     }
-}
-@* @code {
-    // Sample data for demonstration
     List<AuctionItem> auctionItems = new List<AuctionItem>
     {
         new AuctionItem { Id = 1, Name = "Artwork", CurrentPrice = "$100" },
@@ -59,11 +62,10 @@ else
         NavigationManager.NavigateTo($"/auction/{itemId}");
     }
 
-    // Sample class for AuctionItem
     public class AuctionItem
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string CurrentPrice { get; set; }
     }
-} *@
+}
